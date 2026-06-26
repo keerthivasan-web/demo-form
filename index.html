@@ -1964,108 +1964,115 @@ This is a computer-generated form. Please print and retain a signed copy.`;
 
     // Submit form: Generate custom print-ready PDF, trigger client download, upload to Google Sheets, and open email client
     function submitForm() {
-      const currentBase = DocNum.getOrGenerateCurrentBase();
-      const softId = DocNum.getSoftCopyId(currentBase);
-      const to = "mlogesh571@gmail.com";
-      const name = getVal('f_name') || (currentFormMode === 'driver' ? 'Driver' : 'Trainee');
-      const subjectPrefix = currentFormMode === 'driver' ? 'Drivers' : 'Trainee';
-
-      const subject = encodeURIComponent(`${subjectPrefix} Personal Data Sheet [${softId}] – ${name}`);
-      const body = encodeURIComponent(buildEmailBody());
-
-      // If API endpoint is offline or not set, log locally and open mail client directly
-      if (!DocNum.getApiEndpoint()) {
-        DocNum.logDocument(name, 'soft_copy');
-        proceedToMail();
-        return;
-      }
-
-      // Show loader overlay
+      // Show loader overlay immediately to indicate processing
       const loader = document.getElementById('submission-loader');
       if (loader) loader.style.display = 'flex';
 
-      // Gather form fields
-      const rawFields = {};
-      document.querySelectorAll('input, select, textarea').forEach(el => {
-        if (el.id) {
-          if (el.type === 'radio' || el.type === 'checkbox') {
-            if (el.checked) rawFields[el.id] = el.value;
-          } else {
-            rawFields[el.id] = el.value;
+      const name = getVal('f_name') || (currentFormMode === 'driver' ? 'Driver' : 'Trainee');
+
+      // Fetch the latest unique sequence number from central database before generating PDF and sending
+      DocNum.syncNextId((newBase) => {
+        // Update display with the newly fetched unique ID
+        updateDocNumberDisplay();
+
+        const softId = DocNum.getSoftCopyId(newBase);
+        const to = "mlogesh571@gmail.com";
+        const subjectPrefix = currentFormMode === 'driver' ? 'Drivers' : 'Trainee';
+
+        const subject = encodeURIComponent(`${subjectPrefix} Personal Data Sheet [${softId}] – ${name}`);
+        const body = encodeURIComponent(buildEmailBody());
+
+        // Gather form fields
+        const rawFields = {};
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+          if (el.id) {
+            if (el.type === 'radio' || el.type === 'checkbox') {
+              if (el.checked) rawFields[el.id] = el.value;
+            } else {
+              rawFields[el.id] = el.value;
+            }
           }
-        }
-      });
+        });
 
-      const payload = {
-        docId: softId,
-        baseId: currentBase,
-        mode: currentFormMode,
-        name: name,
-        aadhaar: getVal('f_aadhaar'),
-        phone: getVal('f_contact'),
-        email: to,
-        fields: {
-          ...rawFields,
-          formatted_education: getVal('f_edu'),
-          formatted_address_permanent: getVal('f_permaddr'),
-          formatted_address_present: getVal('f_presaddr'),
-          formatted_idmarks: getVal('f_idmarks'),
-        }
-      };
-
-      const element = document.getElementById('printArea');
-      const filename = `${softId}-${name.replace(/\s+/g, '_')}.pdf`;
-
-      // Call our custom PDF generator from html2pdf.js
-      generateFormPDF(element, filename, function (err, blob) {
-        if (err) {
-          console.warn('PDF conversion failed:', err);
-          if (loader) loader.style.display = 'none';
-          DocNum.logDocument(name, 'soft_copy');
-          proceedToMail();
-          return;
-        }
-
-        // Trigger local PDF download immediately
-        try {
-          const downloadUrl = URL.createObjectURL(blob);
-          const downloadLink = document.createElement('a');
-          downloadLink.href = downloadUrl;
-          downloadLink.download = filename;
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          document.body.removeChild(downloadLink);
-          setTimeout(() => URL.revokeObjectURL(downloadUrl), 100);
-        } catch (downloadErr) {
-          console.warn('Local PDF download failed:', downloadErr);
-        }
-
-        // Convert blob to base64 for Google Sheets sync
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          const base64data = reader.result.split(',')[1];
-          payload.pdfBase64 = base64data;
-          payload.pdfName = filename;
-
-          // POST to central database
-          fetch(DocNum.getApiEndpoint(), {
-            method: 'POST',
-            mode: 'no-cors',
-            body: JSON.stringify(payload)
-          })
-            .then(() => {
-              if (loader) loader.style.display = 'none';
-              DocNum.logDocument(name, 'soft_copy');
-              proceedToMail();
-            })
-            .catch(err => {
-              console.warn('Google Sheets upload error:', err);
-              if (loader) loader.style.display = 'none';
-              DocNum.logDocument(name, 'soft_copy');
-              proceedToMail();
-            });
+        const payload = {
+          docId: softId,
+          baseId: newBase,
+          mode: currentFormMode,
+          name: name,
+          aadhaar: getVal('f_aadhaar'),
+          phone: getVal('f_contact'),
+          email: to,
+          fields: {
+            ...rawFields,
+            formatted_education: getVal('f_edu'),
+            formatted_address_permanent: getVal('f_permaddr'),
+            formatted_address_present: getVal('f_presaddr'),
+            formatted_idmarks: getVal('f_idmarks'),
+          }
         };
+
+        const element = document.getElementById('printArea');
+        const filename = `${softId}-${name.replace(/\s+/g, '_')}.pdf`;
+
+        // Call our custom PDF generator from html2pdf.js
+        generateFormPDF(element, filename, function (err, blob) {
+          if (err) {
+            console.warn('PDF conversion failed:', err);
+            if (loader) loader.style.display = 'none';
+            DocNum.logDocument(name, 'soft_copy');
+            proceedToMail();
+            return;
+          }
+
+          // Trigger local PDF download immediately
+          try {
+            const downloadUrl = URL.createObjectURL(blob);
+            const downloadLink = document.createElement('a');
+            downloadLink.href = downloadUrl;
+            downloadLink.download = filename;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            setTimeout(() => URL.revokeObjectURL(downloadUrl), 100);
+          } catch (downloadErr) {
+            console.warn('Local PDF download failed:', downloadErr);
+          }
+
+          // Convert blob to base64 for Google Sheets sync
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = () => {
+            const base64data = reader.result.split(',')[1];
+            payload.pdfBase64 = base64data;
+            payload.pdfName = filename;
+
+            // If API endpoint is not set, log locally and open mail client directly
+            if (!DocNum.getApiEndpoint()) {
+              if (loader) loader.style.display = 'none';
+              DocNum.logDocument(name, 'soft_copy');
+              proceedToMail();
+              return;
+            }
+
+            // POST to central database
+            fetch(DocNum.getApiEndpoint(), {
+              method: 'POST',
+              mode: 'no-cors',
+              body: JSON.stringify(payload)
+            })
+              .then(() => {
+                if (loader) loader.style.display = 'none';
+                DocNum.logDocument(name, 'soft_copy');
+                proceedToMail();
+              })
+              .catch(err => {
+                console.warn('Google Sheets upload error:', err);
+                if (loader) loader.style.display = 'none';
+                DocNum.logDocument(name, 'soft_copy');
+                proceedToMail();
+              });
+          };
+        });
       });
     }
 
