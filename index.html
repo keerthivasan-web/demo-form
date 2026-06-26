@@ -1,0 +1,2085 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tabler Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <!-- Unique Document Numbering Library -->
+  <script src="docnum.js"></script>
+  <!-- HTML to PDF Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <!-- Custom PDF Helper for CVE&WD Forms -->
+  <script src="html2pdf.js"></script>
+
+  <style>
+    /* Reset & CSS Variables */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --color-bg-page: #f1f5f9;
+      --color-bg-card: #ffffff;
+      --color-bg-label: #f8fafc;
+      --color-border-grid: #000000;
+      --color-border-input: #cbd5e1;
+      --color-text-primary: #000000;
+      --color-text-secondary: #475569;
+      --color-primary: #0f172a;
+      --color-primary-hover: #1e293b;
+      --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--color-bg-page);
+      color: var(--color-text-primary);
+      min-height: 100vh;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .app-wrap {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* Card Container */
+    .form-container-card {
+      background: var(--color-bg-card);
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+      border: 1px solid #cbd5e1;
+    }
+
+    /* Logo and Organization Header Box */
+    .logo-org-box {
+      display: flex;
+      align-items: stretch;
+      border: 1.5px solid var(--color-border-grid);
+      margin-bottom: 0.75rem;
+    }
+
+    .logo-box {
+      background: #e85d97;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 20px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 0.5px;
+      border-right: 1.5px solid var(--color-border-grid);
+      text-transform: uppercase;
+    }
+
+    .org-name {
+      padding: 6px 12px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      line-height: 1.3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      flex: 1;
+      color: #000000;
+    }
+
+    /* Document Numbering Box */
+    .doc-number-box {
+      padding: 6px 12px;
+      border-left: 1.5px solid var(--color-border-grid);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-end;
+      margin-left: auto;
+      background: var(--color-bg-label);
+      min-width: 200px;
+    }
+
+    .doc-label {
+      font-size: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: #475569;
+      letter-spacing: 0.5px;
+      margin-bottom: 1px;
+    }
+
+    .doc-value {
+      font-size: 11px;
+      font-weight: 800;
+      color: #000000;
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+
+    /* Meta details and Photo section */
+    .meta-photo-layout {
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-end;
+      margin-bottom: 0.75rem;
+    }
+
+    .meta-fields-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .meta-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .meta-input-group label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #000000;
+      white-space: nowrap;
+      text-transform: uppercase;
+    }
+
+    .meta-input-group input {
+      flex: 1;
+      border: none;
+      border-bottom: 1.5px solid var(--color-border-grid);
+      background: transparent;
+      font-size: 12px;
+      font-family: var(--font-sans);
+      color: #000000;
+      outline: none;
+      padding: 1px 2px;
+      font-weight: 500;
+    }
+
+    .meta-input-group input:focus {
+      border-bottom-color: #2563eb;
+      background: rgba(37, 99, 235, 0.03);
+    }
+
+    .photo-box {
+      width: 85px;
+      height: 95px;
+      border: 1.5px solid var(--color-border-grid);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      background: #ffffff;
+      flex-shrink: 0;
+    }
+
+    /* Main Section Title */
+    .sheet-title {
+      text-align: center;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      padding: 6px 0;
+      text-transform: uppercase;
+      border-top: 1.5px solid var(--color-border-grid);
+      border-bottom: 1.5px solid var(--color-border-grid);
+      margin-bottom: 0.75rem;
+      color: #000000;
+    }
+
+    /* Form Grid Table Container */
+    .form-grid {
+      border: 1.5px solid var(--color-border-grid);
+    }
+
+    /* Standard Rows */
+    .field-row {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      border-bottom: 1.5px solid var(--color-border-grid);
+      min-height: 28px;
+    }
+
+    .field-row.tall {
+      min-height: 52px;
+    }
+
+    .field-row.tall .field-label {
+      align-items: flex-start;
+      padding-top: 6px;
+    }
+
+    .field-label {
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      border-right: 1.5px solid var(--color-border-grid);
+      display: flex;
+      align-items: center;
+      background: var(--color-bg-label);
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    .field-input {
+      display: flex;
+      align-items: stretch;
+      background: #ffffff;
+    }
+
+    .field-input input,
+    .field-input select,
+    .field-input textarea {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 11px;
+      color: #000000;
+      outline: none;
+      font-family: var(--font-sans);
+      padding: 4px 8px;
+      resize: none;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .field-input input:focus,
+    .field-input select:focus,
+    .field-input textarea:focus {
+      background-color: #f0f7ff;
+    }
+
+    /* Split Row (Aadhaar & DOB) */
+    .split-row {
+      display: grid;
+      grid-template-columns: 200px 1fr 120px 1fr;
+      border-bottom: 1.5px solid var(--color-border-grid);
+      min-height: 28px;
+    }
+
+    .split-label {
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      border-right: 1.5px solid var(--color-border-grid);
+      display: flex;
+      align-items: center;
+      background: var(--color-bg-label);
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    .split-input {
+      display: flex;
+      align-items: stretch;
+      border-right: 1.5px solid var(--color-border-grid);
+    }
+
+    .split-input:last-child {
+      border-right: none;
+    }
+
+    .split-input input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 11px;
+      color: #000000;
+      outline: none;
+      padding: 4px 8px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .split-input input:focus {
+      background-color: #f0f7ff;
+    }
+
+    /* Industrial Experience Layout */
+    .exp-section {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      border-bottom: 1.5px solid var(--color-border-grid);
+    }
+
+    .exp-label {
+      padding: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      border-right: 1.5px solid var(--color-border-grid);
+      display: flex;
+      align-items: center;
+      background: var(--color-bg-label);
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+
+
+    /* Custom Select & Date picker styling */
+    select {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23000000' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 12px;
+      padding-right: 30px !important;
+      cursor: pointer;
+    }
+
+    /* Actions styling */
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 1rem;
+      justify-content: flex-end;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-sans);
+    }
+
+    .btn-primary {
+      background: #0f172a;
+      color: #ffffff;
+      border: 1px solid #0f172a;
+    }
+
+    .btn-primary:hover {
+      background: #1e293b;
+      border-color: #1e293b;
+    }
+
+    .btn-secondary {
+      background: #ffffff;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+
+    .btn-secondary:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    /* Accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      border: 0;
+    }
+
+    /* Screen display settings for doc number copies */
+    .hard-copy-only {
+      display: none;
+    }
+
+    .soft-copy-only {
+      display: inline;
+    }
+
+    /* Print settings */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 5mm 8mm;
+        /* standard printable margins */
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        font-size: 11px !important;
+      }
+
+      .app-wrap {
+        margin: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+
+      .form-container-card {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: transparent !important;
+        page-break-inside: avoid;
+        break-inside: avoid;
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+
+      .actions,
+      .no-print {
+        display: none !important;
+      }
+
+      /* Keep backgrounds visible when printing */
+      .logo-box,
+      .doc-number-box,
+      .field-label,
+      .split-label,
+      .exp-label,
+      .exp-sub-inner-label,
+      .option-container input[type="radio"] {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* Strong border lines */
+      .form-grid {
+        border: 2px solid #000000 !important;
+      }
+
+      .field-row,
+      .split-row {
+        border-bottom: 2px solid #000000 !important;
+      }
+
+      .field-row:last-child,
+      .split-row:last-child {
+        border-bottom: none !important;
+      }
+
+      .field-label,
+      .split-label,
+      .split-input {
+        border-right: 2px solid #000000 !important;
+      }
+
+      .split-input:last-child {
+        border-right: none !important;
+      }
+
+      .logo-org-box {
+        border: 2px solid #000000 !important;
+        margin-bottom: 6px !important;
+      }
+
+      .logo-box {
+        border-right: 2px solid #000000 !important;
+        padding: 5px 10px !important;
+        font-size: 18px !important;
+      }
+
+      .org-name {
+        padding: 5px 10px !important;
+        font-size: 8.5px !important;
+        line-height: 1.25 !important;
+      }
+
+      .doc-number-box {
+        border-left: 2px solid #000000 !important;
+        padding: 5px 10px !important;
+        min-width: 160px !important;
+      }
+
+      .doc-label {
+        font-size: 8px !important;
+      }
+
+      .doc-value {
+        font-size: 10px !important;
+      }
+
+      .meta-photo-layout {
+        gap: 0.65rem !important;
+        margin-bottom: 6px !important;
+      }
+
+      .meta-fields-col {
+        gap: 4px !important;
+      }
+
+      .meta-input-group {
+        gap: 4px !important;
+      }
+
+      .meta-input-group label {
+        font-size: 10px !important;
+      }
+
+      .meta-input-group input {
+        font-size: 11px !important;
+        padding: 1px 2px !important;
+        border-bottom: 2px solid #000000 !important;
+      }
+
+      .photo-box {
+        border: 2px solid #000000 !important;
+        width: 80px !important;
+        height: 90px !important;
+        font-size: 9px !important;
+      }
+
+      .sheet-title {
+        border-top: 2px solid #000000 !important;
+        border-bottom: 2px solid #000000 !important;
+        padding: 4px 0 !important;
+        margin-bottom: 6px !important;
+        font-size: 12px !important;
+      }
+
+      /* Taller row sizes to fill empty A4 space */
+      .field-row,
+      .split-row,
+      .exp-sub-row {
+        min-height: 27px !important;
+      }
+
+      .field-row.tall {
+        min-height: 44px !important;
+      }
+
+      .field-row.tall .field-label {
+        padding-top: 3px !important;
+      }
+
+      .field-label,
+      .split-label,
+      .exp-label,
+      .exp-sub-inner-label {
+        padding: 3px 6px !important;
+        font-size: 10px !important;
+      }
+
+      .field-input input,
+      .field-input select,
+      .field-input textarea,
+      .split-input input,
+      .exp-sub-inner-input input,
+      .meta-input-group input {
+        font-size: 11px !important;
+        padding: 3px 6px !important;
+        background-color: transparent !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .options-layout {
+        gap: 1.5rem !important;
+        padding: 3px 6px !important;
+      }
+
+      .option-container {
+        font-size: 10px !important;
+        gap: 5px !important;
+      }
+
+      .option-container input[type="radio"] {
+        width: 13px !important;
+        height: 13px !important;
+        border: 2px solid #000000 !important;
+      }
+
+      .option-container input[type="radio"]:checked::before {
+        font-size: 9px !important;
+      }
+
+      .edu-layout {
+        gap: 4px !important;
+        padding: 4px !important;
+      }
+
+      .edu-options-row {
+        gap: 10px !important;
+      }
+
+      .idmark-item {
+        min-height: 20px !important;
+        border-bottom: 2px solid #000000 !important;
+      }
+
+      .idmark-item:last-child {
+        border-bottom: none !important;
+      }
+
+      .idmark-num {
+        padding: 2px 6px !important;
+        font-size: 10px !important;
+        min-width: 20px !important;
+        border-right: 2px solid #000000 !important;
+      }
+
+      .idmark-item input {
+        padding: 2px 6px !important;
+        font-size: 10px !important;
+      }
+
+      .exp-section {
+        border-bottom: 2px solid #000000 !important;
+      }
+
+      .exp-label {
+        border-right: 2px solid #000000 !important;
+      }
+
+      .exp-sub-row {
+        border-bottom: 2px solid #000000 !important;
+      }
+
+      .exp-sub-row:last-child {
+        border-bottom: none !important;
+      }
+
+      .exp-sub-inner-input[style*="border-right"] {
+        border-right: 2px solid #000000 !important;
+      }
+
+      .exp-sub-row.split {
+        grid-template-columns: 100px 1fr 100px 1fr !important;
+      }
+
+      .hard-copy-only {
+        display: inline !important;
+      }
+
+      .soft-copy-only {
+        display: none !important;
+      }
+    }
+
+
+
+    /* Mobile styles (screens <= 600px) */
+    @media screen and (max-width: 600px) {
+      body {
+        padding: 1rem 0.5rem;
+      }
+
+      .form-container-card {
+        padding: 1rem;
+        border-radius: 6px;
+      }
+
+      .logo-org-box {
+        flex-direction: column;
+      }
+
+      .logo-box {
+        border-right: none;
+        border-bottom: 1.5px solid var(--color-border-grid);
+        padding: 8px;
+        font-size: 18px;
+      }
+
+      .org-name {
+        padding: 8px;
+        font-size: 9px;
+      }
+
+      .doc-number-box {
+        border-left: none;
+        border-top: 1.5px solid var(--color-border-grid);
+        align-items: center;
+        width: 100%;
+        min-width: 0;
+        padding: 6px;
+      }
+
+      .meta-photo-layout {
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .meta-fields-col {
+        width: 100%;
+        gap: 8px;
+      }
+
+      .meta-input-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        width: 100%;
+      }
+
+      .meta-input-group input {
+        width: 100%;
+        min-width: 0;
+      }
+
+      .photo-box {
+        align-self: center;
+      }
+
+      /* Stack grid rows on mobile */
+      .field-row {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .field-label {
+        border-right: none;
+        border-bottom: 1.5px solid var(--color-border-grid);
+        padding: 6px 8px;
+      }
+
+      .field-input input,
+      .field-input select,
+      .field-input textarea {
+        padding: 6px 8px;
+      }
+
+      /* Stack Aadhaar & DOB row on mobile */
+      .split-row {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+
+      .split-label {
+        border-right: none;
+        border-bottom: 1.5px solid var(--color-border-grid);
+        padding: 6px 8px;
+      }
+
+      .split-input {
+        border-right: none;
+        border-bottom: 1.5px solid var(--color-border-grid);
+      }
+
+      .split-input input {
+        padding: 6px 8px;
+      }
+
+      .actions .btn {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .meta-row-split {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .exp-sub-row {
+        flex-direction: column !important;
+        min-height: auto !important;
+      }
+
+      .exp-sub-row.split {
+        grid-template-columns: 1fr !important;
+      }
+
+      .exp-sub-inner-label {
+        border-right: none !important;
+        border-bottom: 1.5px solid var(--color-border-grid) !important;
+        width: 100% !important;
+        padding: 6px 8px !important;
+      }
+
+      .exp-sub-inner-input {
+        border-right: none !important;
+        border-bottom: 1.5px solid var(--color-border-grid) !important;
+      }
+
+      .exp-sub-inner-input:last-child {
+        border-bottom: none !important;
+      }
+
+      .exp-section {
+        grid-template-columns: 1fr !important;
+      }
+
+      .exp-label {
+        border-right: none !important;
+        border-bottom: 1.5px solid var(--color-border-grid);
+        padding: 6px 8px !important;
+      }
+
+      .split-row .split-input:last-child {
+        border-bottom: none !important;
+      }
+
+      .split-input {
+        border-right: none !important;
+      }
+
+      .form-selector-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 10px;
+      }
+
+      .selector-label {
+        text-align: center;
+        margin-bottom: 4px;
+      }
+
+      .selector-options {
+        justify-content: center;
+      }
+
+      .selector-btn {
+        flex: 1;
+        justify-content: center;
+      }
+
+      .training-period-layout {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 4px !important;
+        padding: 6px 8px !important;
+      }
+
+      .training-period-layout input {
+        border-bottom: 1.5px solid var(--color-border-grid) !important;
+        padding: 4px 0 !important;
+      }
+
+      .training-period-layout input:last-child {
+        border-bottom: none !important;
+      }
+
+      .period-to-label {
+        text-align: center;
+        padding: 2px 0;
+      }
+
+      .empty-cell {
+        display: none !important;
+      }
+    }
+
+    /* Form Selector Bar */
+    .form-selector-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      background: var(--color-bg-card);
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    }
+
+    .selector-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .selector-options {
+      display: flex;
+      gap: 8px;
+    }
+
+    .selector-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: var(--font-sans);
+    }
+
+    .selector-btn:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+
+    .selector-btn.active {
+      background: #0f172a;
+      border-color: #0f172a;
+      color: #ffffff;
+    }
+
+    /* Dynamic Form Stems */
+    .form-mode-driver .trainee-only-row {
+      display: none !important;
+    }
+
+    .form-mode-trainee .driver-only-row {
+      display: none !important;
+    }
+
+    /* Trainee Specific Layouts */
+    .training-period-layout {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 8px;
+      width: 100%;
+    }
+
+    .training-period-layout input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 0;
+      width: 100%;
+    }
+
+    .period-to-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #000000;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .empty-cell {
+      background: var(--color-bg-label);
+    }
+
+    /* New layout styles */
+    .meta-row-split {
+      display: flex;
+      gap: 1.5rem;
+      width: 100%;
+    }
+
+    .meta-row-split .meta-input-group {
+      flex: 1;
+    }
+
+    .options-layout {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      padding: 4px 8px;
+      flex-wrap: wrap;
+    }
+
+    .option-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      text-transform: uppercase;
+      color: #000000;
+    }
+
+    .option-container input[type="radio"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border: 1.5px solid var(--color-border-grid);
+      border-radius: 0px;
+      outline: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #ffffff;
+      padding: 0 !important;
+    }
+
+    .option-container input[type="radio"]:checked::before {
+      content: "✔";
+      font-size: 10px;
+      font-weight: 900;
+      color: #000000;
+      position: absolute;
+    }
+
+    .edu-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 8px;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .edu-options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .idmarks-layout {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      justify-content: stretch;
+    }
+
+    .idmark-item {
+      display: flex;
+      align-items: center;
+      border-bottom: 1.5px solid var(--color-border-grid);
+      min-height: 26px;
+    }
+
+    .idmark-item:last-child {
+      border-bottom: none;
+    }
+
+    .idmark-num {
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      color: #000000;
+      border-right: 1.5px solid var(--color-border-grid);
+      min-width: 30px;
+      text-align: center;
+    }
+
+    .idmark-item input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 4px 8px;
+      font-size: 11px;
+      height: 100%;
+    }
+
+    .exp-sub-layout {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .exp-sub-row {
+      display: flex;
+      align-items: stretch;
+      border-bottom: 1.5px solid var(--color-border-grid);
+      min-height: 28px;
+    }
+
+    .exp-sub-row:last-child {
+      border-bottom: none;
+    }
+
+    .exp-sub-row.split {
+      display: grid;
+      grid-template-columns: 110px 1fr 110px 1fr;
+    }
+
+    .exp-sub-inner-label {
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      background: var(--color-bg-label);
+      color: #000000;
+      white-space: nowrap;
+      border-right: 1.5px solid var(--color-border-grid);
+      text-transform: uppercase;
+    }
+
+    .exp-sub-inner-input {
+      display: flex;
+      align-items: stretch;
+      flex: 1;
+    }
+
+    .exp-sub-inner-input input {
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+
+    /* Submission Loader Overlay Styling */
+    .submission-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    .loader-card {
+      background: #ffffff;
+      padding: 24px 32px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 380px;
+      width: 90%;
+      border: 1.5px solid #e2e8f0;
+      animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .loader-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #f1f5f9;
+      border-top: 4px solid var(--color-primary, #0f172a);
+      border-radius: 50%;
+      margin: 0 auto 16px auto;
+      animation: spin 1s linear infinite;
+    }
+
+    .loader-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: var(--font-sans);
+    }
+
+    .loader-subtitle {
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.5;
+      font-family: var(--font-sans);
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        transform: scale(0.9);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+
+<body class="form-mode-driver">
+
+  <div class="app-wrap" id="mainAppWrap">
+    <h2 class="sr-only">CVE&WD Drivers Personal Data Sheet Form</h2>
+
+    <!-- Form Selector Toggle Bar -->
+    <div class="form-selector-bar no-print">
+      <span class="selector-label">Select Form Template:</span>
+      <div class="selector-options">
+        <button class="selector-btn active" id="btn-mode-driver" onclick="setFormMode('driver')">
+          <i class="ti ti-steering-wheel"></i> Drivers Form
+        </button>
+        <button class="selector-btn" id="btn-mode-trainee" onclick="setFormMode('trainee')">
+          <i class="ti ti-school"></i> Trainee Form
+        </button>
+      </div>
+    </div>
+
+    <!-- Form Content -->
+    <div id="tab-form">
+      <div class="form-container-card" id="printArea">
+
+        <!-- Logo Block -->
+        <div class="logo-org-box">
+          <div class="logo-box">CVE & WD</div>
+          <div class="org-name">Centre for Vocational Education and Workforce Development India Private Limited</div>
+          <div class="doc-number-box">
+            <div class="doc-label">HR/SDC/02</div>
+            <div class="doc-value">
+              <span class="soft-copy-only" id="doc-id-soft">CVEWD-XXXXXX-XXXX-S</span>
+              <span class="hard-copy-only" id="doc-id-hard">CVEWD-XXXXXX-XXXX-H</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meta fields & Photo Row -->
+        <div class="meta-photo-layout">
+          <div class="meta-fields-col">
+            <div class="meta-input-group">
+              <label for="faceId">FACE ID:</label>
+              <input id="faceId" type="text" placeholder="Enter Face ID" />
+            </div>
+            <div class="meta-row-split">
+              <div class="meta-input-group">
+                <label for="osaName">Name of the OSA:</label>
+                <input id="osaName" type="text" placeholder="Enter OSA name" />
+              </div>
+              <div class="meta-input-group">
+                <label for="cveIdNo">CVE ID No:</label>
+                <input id="cveIdNo" type="text" placeholder="Enter CVE ID No" />
+              </div>
+            </div>
+            <div class="meta-input-group">
+              <label for="natureService">Nature of Service:</label>
+              <input id="natureService" type="text" placeholder="Enter nature of service" />
+            </div>
+          </div>
+          <div class="photo-box">Photo</div>
+        </div>
+
+        <!-- Sheet Title -->
+        <div class="sheet-title">Drivers Personal Data Sheet</div>
+
+        <!-- Form Grid -->
+        <div class="form-grid">
+
+          <!-- Name -->
+          <div class="field-row">
+            <div class="field-label">Name</div>
+            <div class="field-input">
+              <input id="f_name" type="text" placeholder="Enter full name" />
+            </div>
+          </div>
+
+          <!-- Gender -->
+          <div class="field-row">
+            <div class="field-label">Gender</div>
+            <div class="field-input options-layout">
+              <label class="option-container">
+                <input type="radio" name="f_gender" value="Male" id="gender_male">
+                Male
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_gender" value="Female" id="gender_female">
+                Female
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_gender" value="Transgender" id="gender_transgender">
+                Transgender
+              </label>
+            </div>
+          </div>
+
+          <!-- Aadhaar & DOB Split Row -->
+          <div class="split-row">
+            <div class="split-label">Aadhaar No</div>
+            <div class="split-input">
+              <input id="f_aadhaar" type="text" placeholder="Enter Aadhaar Number" />
+            </div>
+            <div class="split-label">Date of Birth</div>
+            <div class="split-input">
+              <input id="f_dob" type="date" />
+            </div>
+          </div>
+
+          <!-- Marital Status & Spouse name -->
+          <div class="split-row">
+            <div class="split-label">Marital Status</div>
+            <div class="split-input options-layout">
+              <label class="option-container">
+                <input type="radio" name="f_marital" value="Married" id="marital_married">
+                Married
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_marital" value="Single" id="marital_single">
+                Single
+              </label>
+            </div>
+            <div class="split-label">Spouse name:</div>
+            <div class="split-input">
+              <input id="f_spouse" type="text" placeholder="Enter spouse name" />
+            </div>
+          </div>
+
+          <!-- Educational Qualification -->
+          <div class="field-row tall" style="min-height: 100px;">
+            <div class="field-label">Educational Qualification</div>
+            <div class="field-input edu-layout">
+              <div class="edu-options-row">
+                <label class="option-container"><input type="radio" name="f_edu_level" value="1"> 1</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="2"> 2</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="3"> 3</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="4"> 4</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="5"> 5</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="6"> 6</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="7"> 7</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="8"> 8</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="9"> 9</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="10"> 10</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="11"> 11</label>
+                <label class="option-container"><input type="radio" name="f_edu_level" value="12"> 12</label>
+              </div>
+              <div class="edu-options-row">
+                <label class="option-container"><input type="radio" name="f_edu_type" value="ITI"> ITI</label>
+                <label class="option-container"><input type="radio" name="f_edu_type" value="DIPLOMO"> DIPLOMO</label>
+                <label class="option-container"><input type="radio" name="f_edu_type" value="DEGREE"> DEGREE</label>
+              </div>
+              <div class="edu-options-row">
+                <label class="option-container"><input type="radio" name="f_edu_status" value="Pass"> Pass</label>
+                <label class="option-container"><input type="radio" name="f_edu_status" value="Fail"> Fail</label>
+                <label class="option-container"><input type="radio" name="f_edu_status" value="Discontinue">
+                  Discontinue</label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Father Name -->
+          <div class="field-row">
+            <div class="field-label">Father Name</div>
+            <div class="field-input">
+              <input id="f_father" type="text" placeholder="Enter father's name" />
+            </div>
+          </div>
+
+          <!-- Mother Name -->
+          <div class="field-row">
+            <div class="field-label">Mother Name</div>
+            <div class="field-input">
+              <input id="f_mother" type="text" placeholder="Enter mother's name" />
+            </div>
+          </div>
+
+          <!-- Religion -->
+          <div class="field-row">
+            <div class="field-label">Religion</div>
+            <div class="field-input options-layout">
+              <label class="option-container">
+                <input type="radio" name="f_religion" value="Hindu" id="religion_hindu">
+                Hindu
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_religion" value="Christian" id="religion_christian">
+                Christian
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_religion" value="Muslim" id="religion_muslim">
+                Muslim
+              </label>
+            </div>
+          </div>
+
+          <!-- Caste -->
+          <div class="field-row">
+            <div class="field-label">Caste</div>
+            <div class="field-input options-layout">
+              <label class="option-container">
+                <input type="radio" name="f_caste" value="SC" id="caste_sc">
+                SC
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_caste" value="ST" id="caste_st">
+                ST
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_caste" value="MBC" id="caste_mbc">
+                MBC
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_caste" value="BC" id="caste_bc">
+                BC
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_caste" value="OBC" id="caste_obc">
+                OBC
+              </label>
+              <label class="option-container">
+                <input type="radio" name="f_caste" value="FC" id="caste_fc">
+                FC
+              </label>
+            </div>
+          </div>
+
+          <!-- Permanent Address Split Rows -->
+          <div class="split-row">
+            <div class="split-label">Permanent Address: Door No:</div>
+            <div class="split-input">
+              <input id="f_perm_door" type="text" placeholder="Door No" />
+            </div>
+            <div class="split-label">Street:</div>
+            <div class="split-input">
+              <input id="f_perm_street" type="text" placeholder="Street" />
+            </div>
+          </div>
+          <div class="split-row">
+            <div class="split-label">Village:</div>
+            <div class="split-input">
+              <input id="f_perm_village" type="text" placeholder="Village" />
+            </div>
+            <div class="split-label">Post Office:</div>
+            <div class="split-input">
+              <input id="f_perm_po" type="text" placeholder="Post Office" />
+            </div>
+          </div>
+          <div class="split-row">
+            <div class="split-label">Taluk :</div>
+            <div class="split-input">
+              <input id="f_perm_taluk" type="text" placeholder="Taluk" />
+            </div>
+            <div class="split-label">District:</div>
+            <div class="split-input">
+              <input id="f_perm_dist" type="text" placeholder="District" />
+            </div>
+          </div>
+          <div class="split-row">
+            <div class="split-label">State:</div>
+            <div class="split-input">
+              <input id="f_perm_state" type="text" placeholder="State" />
+            </div>
+            <div class="split-label">Pin code:</div>
+            <div class="split-input">
+              <input id="f_perm_pin" type="text" placeholder="Pin code" />
+            </div>
+          </div>
+
+          <!-- Present Address -->
+          <div class="field-row tall">
+            <div class="field-label">Present Address</div>
+            <div class="field-input">
+              <textarea id="f_presaddr" placeholder="Enter present address..."></textarea>
+            </div>
+          </div>
+
+          <!-- Contact Telephone Number -->
+          <div class="field-row">
+            <div class="field-label">Contact Telephone Number</div>
+            <div class="field-input">
+              <input id="f_contact" type="tel" placeholder="Enter phone number" />
+            </div>
+          </div>
+
+          <!-- First Information Given to: (In case of emergency) -->
+          <div class="field-row tall">
+            <div class="field-label">First Information Given to:<br>(In case of emergency)</div>
+            <div class="field-input">
+              <input id="f_emcontact" type="text" placeholder="Enter emergency contact info" />
+            </div>
+          </div>
+
+          <!-- Personal Identification Marks -->
+          <div class="field-row tall" style="min-height: 52px;">
+            <div class="field-label">Personal Identification Marks</div>
+            <div class="field-input idmarks-layout">
+              <div class="idmark-item">
+                <span class="idmark-num">1.</span>
+                <input id="f_idmark1" type="text" placeholder="Mark 1" />
+              </div>
+              <div class="idmark-item">
+                <span class="idmark-num">2.</span>
+                <input id="f_idmark2" type="text" placeholder="Mark 2" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Blood Group -->
+          <div class="field-row">
+            <div class="field-label">Blood Group</div>
+            <div class="field-input">
+              <select id="f_blood">
+                <option value="">Select Blood Group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Industrial Experience Section -->
+          <div class="exp-section">
+            <div class="exp-label">Industrial Experience</div>
+            <div class="exp-sub-layout">
+              <div class="exp-sub-row">
+                <div class="exp-sub-inner-label">Company Name :</div>
+                <div class="exp-sub-inner-input">
+                  <input id="f_expco" type="text" placeholder="Enter previous company" />
+                </div>
+              </div>
+              <div class="exp-sub-row split">
+                <div class="exp-sub-inner-label">Period :</div>
+                <div class="exp-sub-inner-input" style="border-right: 1.5px solid var(--color-border-grid);">
+                  <input id="f_expperiod" type="text" placeholder="e.g. Jan 2020 – Dec 2022" />
+                </div>
+                <div class="exp-sub-inner-label">Designation :</div>
+                <div class="exp-sub-inner-input">
+                  <input id="f_expdesig" type="text" placeholder="Enter job title / role" />
+                </div>
+              </div>
+              <div class="exp-sub-row">
+                <div class="exp-sub-inner-label">Reason for Leaving :</div>
+                <div class="exp-sub-inner-input">
+                  <input id="f_expreason" type="text" placeholder="Enter reason for leaving" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reference By -->
+          <div class="field-row">
+            <div class="field-label">Reference By</div>
+            <div class="field-input">
+              <input id="f_refby" type="text" placeholder="Enter referrer name" />
+            </div>
+          </div>
+
+          <!-- Date of Joining (Driver) -->
+          <div class="driver-only-row field-row">
+            <div class="field-label">Date of Joining</div>
+            <div class="field-input">
+              <input id="f_doj" type="date" />
+            </div>
+          </div>
+
+          <!-- Licence No (Driver) -->
+          <div class="driver-only-row field-row">
+            <div class="field-label">Licence No</div>
+            <div class="field-input">
+              <input id="f_licence" type="text" placeholder="Enter driving licence number" />
+            </div>
+          </div>
+
+          <!-- Licence Expiry Date (Driver) -->
+          <div class="driver-only-row field-row">
+            <div class="field-label">Licence Expiry Date</div>
+            <div class="field-input">
+              <input id="f_licexp" type="date" />
+            </div>
+          </div>
+
+          <!-- PAN No (Driver) -->
+          <div class="driver-only-row field-row" id="f_pan_row">
+            <div class="field-label">PAN No</div>
+            <div class="field-input">
+              <input id="f_pan" type="text" placeholder="Enter PAN number" />
+            </div>
+          </div>
+
+          <!-- Trainee Only Section -->
+          <div class="trainee-only-row split-row">
+            <div class="split-label">Date of Joining:</div>
+            <div class="split-input">
+              <input id="f_trainee_doj" type="date" />
+            </div>
+            <div class="split-label">Area of Training:</div>
+            <div class="split-input">
+              <input id="f_trainee_area" type="text" placeholder="Enter Area of Training" />
+            </div>
+          </div>
+
+          <div class="trainee-only-row split-row">
+            <div class="split-label">Batch No:</div>
+            <div class="split-input">
+              <input id="f_trainee_batch" type="text" placeholder="Enter Batch No" />
+            </div>
+            <div class="split-label">Training skill:</div>
+            <div class="split-input">
+              <input id="f_trainee_skill" type="text" placeholder="Enter Training skill" />
+            </div>
+          </div>
+
+          <div class="trainee-only-row split-row">
+            <div class="split-label">Training period from :</div>
+            <div class="split-input training-period-layout">
+              <input id="f_trainee_from" type="date" />
+              <span class="period-to-label">to:</span>
+              <input id="f_trainee_to" type="date" />
+            </div>
+            <div class="split-label">Date of completion:</div>
+            <div class="split-input">
+              <input id="f_trainee_completion" type="date" />
+            </div>
+          </div>
+
+          <div class="trainee-only-row split-row" id="f_trainee_days_row">
+            <div class="split-label">No of days attended:</div>
+            <div class="split-input">
+              <input id="f_trainee_days" type="number" placeholder="Enter number of days" />
+            </div>
+            <div class="split-label empty-cell"></div>
+            <div class="split-input empty-cell"></div>
+          </div>
+
+        </div>
+        <br>
+        <br>
+        <br>
+
+        <!-- Driver Form Signature Section -->
+        <div class="signature-section driver-only-row"
+          style="display: flex; justify-content: space-between; margin-top: 1.25rem; padding: 0 1rem;">
+          <div class="sig-block" style="display: flex; flex-direction: column; align-items: center; width: 200px;">
+            <div class="sig-line"
+              style="width: 100%; border-bottom: 1.5px solid var(--color-border-grid); margin-bottom: 4px;"></div>
+            <div class="sig-label"
+              style="font-size: 9px; font-weight: 700; text-transform: uppercase; color: #000000; text-align: center;">
+              Signature of the Applicant</div>
+          </div>
+          <div class="sig-block" style="display: flex; flex-direction: column; align-items: center; width: 200px;">
+            <div class="sig-line"
+              style="width: 100%; border-bottom: 1.5px solid var(--color-border-grid); margin-bottom: 4px;"></div>
+            <div class="sig-label"
+              style="font-size: 9px; font-weight: 700; text-transform: uppercase; color: #000000; text-align: center;">
+              Authorized Signature</div>
+          </div>
+        </div>
+
+        <!-- Trainee Form Signature Section -->
+        <div class="signature-section trainee-only-row"
+          style="display: flex; justify-content: space-between; margin-top: 1.25rem; padding: 0 1rem;">
+          <div class="sig-block" style="display: flex; flex-direction: column; align-items: center; width: 180px;">
+            <div class="sig-line"
+              style="width: 100%; border-bottom: 1.5px solid var(--color-border-grid); margin-bottom: 4px;"></div>
+            <div class="sig-label"
+              style="font-size: 9px; font-weight: 700; text-transform: uppercase; color: #000000; text-align: center;">
+              Trainee Signature</div>
+          </div>
+          <div class="sig-block" style="display: flex; flex-direction: column; align-items: center; width: 180px;">
+            <div class="sig-line"
+              style="width: 100%; border-bottom: 1.5px solid var(--color-border-grid); margin-bottom: 4px;"></div>
+            <div class="sig-label"
+              style="font-size: 9px; font-weight: 700; text-transform: uppercase; color: #000000; text-align: center;">
+              SDC Trainer Signature</div>
+          </div>
+          <div class="sig-block" style="display: flex; flex-direction: column; align-items: center; width: 180px;">
+            <div class="sig-line"
+              style="width: 100%; border-bottom: 1.5px solid var(--color-border-grid); margin-bottom: 4px;"></div>
+            <div class="sig-label"
+              style="font-size: 9px; font-weight: 700; text-transform: uppercase; color: #000000; text-align: center;">
+              SDC Manager Signature</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Interactive Actions Bar (hidden on print) -->
+      <div class="actions no-print">
+        <button class="btn btn-secondary" onclick="clearForm()">
+          <i class="ti ti-trash"></i> Clear Form
+        </button>
+        <button class="btn btn-secondary" onclick="printForm()">
+          <i class="ti ti-printer"></i> Print / Hard Copy
+        </button>
+        <button class="btn btn-primary" onclick="submitForm()">
+          <i class="ti ti-circle-check"></i> Submit
+        </button>
+        <!-- Submission Loader Overlay -->
+        <div id="submission-loader" class="submission-loader" style="display: none;">
+          <div class="loader-card">
+            <div class="loader-spinner"></div>
+            <div class="loader-title">Saving Form to Database</div>
+            <div class="loader-subtitle">Generating PDF copy and uploading to database. Please wait...</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Get field value safely
+    function getVal(id) {
+      if (id === 'f_edu') {
+        const level = getVal('f_edu_level');
+        const type = getVal('f_edu_type');
+        const status = getVal('f_edu_status');
+        const parts = [];
+        if (level) parts.push(`Class: ${level}`);
+        if (type) parts.push(`Stream: ${type}`);
+        if (status) parts.push(`Status: ${status}`);
+        return parts.join(' | ');
+      }
+      if (id === 'f_permaddr') {
+        const fields = ['f_perm_door', 'f_perm_street', 'f_perm_village', 'f_perm_po', 'f_perm_taluk', 'f_perm_dist', 'f_perm_state', 'f_perm_pin'];
+        const vals = fields.map(f => {
+          const lbl = f.replace('f_perm_', '').replace('po', 'post office').toUpperCase();
+          const v = getVal(f);
+          return v ? `${lbl}: ${v}` : '';
+        }).filter(Boolean);
+        return vals.join(', ');
+      }
+      if (id === 'f_idmarks') {
+        const m1 = getVal('f_idmark1');
+        const m2 = getVal('f_idmark2');
+        const parts = [];
+        if (m1) parts.push(`1. ${m1}`);
+        if (m2) parts.push(`2. ${m2}`);
+        return parts.join(', ');
+      }
+
+      const el = document.getElementById(id);
+      if (el) {
+        return el.value.trim();
+      }
+      // Try name group for radio/checkboxes
+      const checked = document.querySelector(`input[name="${id}"]:checked`);
+      if (checked) {
+        return checked.value;
+      }
+      return '';
+    }
+
+    // Initialize display on load
+    let currentFormMode = 'driver';
+
+    function setFormMode(mode) {
+      currentFormMode = mode;
+      localStorage.setItem('cvewd_form_mode', mode);
+
+      // Update body class
+      document.body.className = `form-mode-${mode}`;
+
+      // Update buttons
+      document.querySelectorAll('.selector-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      const activeBtn = document.getElementById(`btn-mode-${mode}`);
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+
+      // Update title
+      const sheetTitle = document.querySelector('.sheet-title');
+      if (sheetTitle) {
+        sheetTitle.textContent = mode === 'driver'
+          ? 'Drivers Personal Data Sheet'
+          : 'Trainee Personal Data Sheet';
+      }
+    }
+
+    // Initialize display on load
+    function updateDocNumberDisplay() {
+      const currentBase = DocNum.getOrGenerateCurrentBase();
+      document.getElementById('doc-id-soft').textContent = DocNum.getSoftCopyId(currentBase);
+      document.getElementById('doc-id-hard').textContent = DocNum.getHardCopyId(currentBase);
+    }
+
+    // Trigger browser print & log hard copy
+    function printForm() {
+      const name = getVal('f_name') || 'Unnamed';
+      DocNum.logDocument(name, 'hard_copy');
+      window.print();
+    }
+
+    // Reset all fields & generate fresh document number
+    function clearForm() {
+      if (!confirm('Are you sure you want to clear all form fields? A new unique document number will be generated.')) return;
+
+      const fields = [
+        'faceId', 'osaName', 'cveIdNo', 'natureService', 'f_name', 'f_spouse',
+        'f_aadhaar', 'f_dob', 'f_father', 'f_mother',
+        'f_perm_door', 'f_perm_street', 'f_perm_village', 'f_perm_po', 'f_perm_taluk', 'f_perm_dist', 'f_perm_state', 'f_perm_pin',
+        'f_presaddr', 'f_contact', 'f_emcontact', 'f_idmark1', 'f_idmark2', 'f_blood',
+        'f_expco', 'f_expperiod', 'f_expdesig', 'f_expreason', 'f_refby', 'f_doj',
+        'f_licence', 'f_licexp', 'f_pan',
+        'f_trainee_doj', 'f_trainee_area', 'f_trainee_batch', 'f_trainee_skill', 'f_trainee_from', 'f_trainee_to', 'f_trainee_completion', 'f_trainee_days'
+      ];
+
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+
+      // Clear all radio inputs
+      const radios = document.querySelectorAll('input[type="radio"]');
+      radios.forEach(radio => {
+        radio.checked = false;
+      });
+
+      DocNum.generateNewBase();
+      updateDocNumberDisplay();
+
+      // Central background sync
+      DocNum.syncNextId(() => {
+        updateDocNumberDisplay();
+      });
+    }
+
+    // Build clean text representation of the filled sheet
+    function buildEmailBody() {
+      const currentBase = DocNum.getOrGenerateCurrentBase();
+      const softId = DocNum.getSoftCopyId(currentBase);
+
+      const fmt = (label, val) => val ? `${label}: ${val}\n` : '';
+      const fmtDate = (id) => {
+        const v = getVal(id);
+        if (!v) return '';
+        const d = new Date(v);
+        return d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+      };
+
+      const spouse = getVal('f_spouse');
+      const maritalVal = getVal('f_marital');
+      const maritalStatusStr = maritalVal + (spouse ? ` (Spouse Name: ${spouse})` : '');
+
+      const formTitle = currentFormMode === 'driver' ? 'DRIVERS PERSONAL DATA SHEET' : 'TRAINEE PERSONAL DATA SHEET';
+
+      let bottomSection = '';
+      if (currentFormMode === 'driver') {
+        bottomSection = `Reference By: ${getVal('f_refby')}
+Date of Joining: ${fmtDate('f_doj')}
+Licence No: ${getVal('f_licence')}
+Licence Expiry Date: ${fmtDate('f_licexp')}
+PAN No: ${getVal('f_pan')}`;
+      } else {
+        bottomSection = `Reference By: ${getVal('f_refby')}
+Date of Joining: ${fmtDate('f_trainee_doj')}
+Area of Training: ${getVal('f_trainee_area')}
+Batch No: ${getVal('f_trainee_batch')}
+Training skill: ${getVal('f_trainee_skill')}
+Training Period: ${fmtDate('f_trainee_from')} to ${fmtDate('f_trainee_to')}
+Date of Completion: ${fmtDate('f_trainee_completion')}
+No of Days Attended: ${getVal('f_trainee_days')}`;
+      }
+
+      return `CENTRE FOR VOCATIONAL EDUCATION AND WORKFORCE DEVELOPMENT INDIA PRIVATE LIMITED
+======================================================================
+${formTitle}
+======================================================================
+DOCUMENT NO: ${softId}
+======================================================================
+
+FACE ID: ${getVal('faceId')}
+NAME OF OSA: ${getVal('osaName')}
+CVE ID NO: ${getVal('cveIdNo')}
+NATURE OF SERVICE: ${getVal('natureService')}
+
+──────────────────────────────────────────────────
+PERSONAL DETAILS
+──────────────────────────────────────────────────
+Name: ${getVal('f_name')}
+Gender: ${getVal('f_gender')}
+Aadhaar No: ${getVal('f_aadhaar')}
+Date of Birth: ${fmtDate('f_dob')}
+Marital Status: ${maritalStatusStr}
+Educational Qualification: ${getVal('f_edu')}
+Father Name: ${getVal('f_father')}
+Mother Name: ${getVal('f_mother')}
+Religion: ${getVal('f_religion')}
+Caste: ${getVal('f_caste')}
+
+──────────────────────────────────────────────────
+ADDRESS DETAILS
+──────────────────────────────────────────────────
+Permanent Address: ${getVal('f_permaddr')}
+Present Address: ${getVal('f_presaddr')}
+
+──────────────────────────────────────────────────
+CONTACT & IDENTIFICATION
+──────────────────────────────────────────────────
+Contact Number: ${getVal('f_contact')}
+Emergency Contact Number: ${getVal('f_emcontact')}
+Personal Identification Marks: ${getVal('f_idmarks')}
+Blood Group: ${getVal('f_blood')}
+
+──────────────────────────────────────────────────
+INDUSTRIAL EXPERIENCE
+──────────────────────────────────────────────────
+Company Name: ${getVal('f_expco')}
+Period: ${getVal('f_expperiod')}
+Designation: ${getVal('f_expdesig')}
+Reason for Leaving: ${getVal('f_expreason')}
+
+──────────────────────────────────────────────────
+EMPLOYMENT & Documents / Training
+──────────────────────────────────────────────────
+${bottomSection}
+
+======================================================================
+This is a computer-generated form. Please print and retain a signed copy.`;
+    }
+
+    // Redirect to local mail client
+    function proceedToMail() {
+      const currentBase = DocNum.getOrGenerateCurrentBase();
+      const softId = DocNum.getSoftCopyId(currentBase);
+      const to = "keerthinirmal@gmail.com";
+      const name = getVal('f_name') || (currentFormMode === 'driver' ? 'Driver' : 'Trainee');
+      const subjectPrefix = currentFormMode === 'driver' ? 'Drivers' : 'Trainee';
+
+      const subject = encodeURIComponent(`${subjectPrefix} Personal Data Sheet [${softId}] – ${name}`);
+      const body = encodeURIComponent(buildEmailBody());
+      window.location.href = `mailto:${to}?subject=${subject}&body=${body}`;
+    }
+
+    // Submit form: Generate custom print-ready PDF, trigger client download, upload to Google Sheets, and open email client
+    function submitForm() {
+      const currentBase = DocNum.getOrGenerateCurrentBase();
+      const softId = DocNum.getSoftCopyId(currentBase);
+      const to = "mlogesh571@gmail.com";
+      const name = getVal('f_name') || (currentFormMode === 'driver' ? 'Driver' : 'Trainee');
+      const subjectPrefix = currentFormMode === 'driver' ? 'Drivers' : 'Trainee';
+
+      const subject = encodeURIComponent(`${subjectPrefix} Personal Data Sheet [${softId}] – ${name}`);
+      const body = encodeURIComponent(buildEmailBody());
+
+      // If API endpoint is offline or not set, log locally and open mail client directly
+      if (!DocNum.getApiEndpoint()) {
+        DocNum.logDocument(name, 'soft_copy');
+        proceedToMail();
+        return;
+      }
+
+      // Show loader overlay
+      const loader = document.getElementById('submission-loader');
+      if (loader) loader.style.display = 'flex';
+
+      // Gather form fields
+      const rawFields = {};
+      document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.id) {
+          if (el.type === 'radio' || el.type === 'checkbox') {
+            if (el.checked) rawFields[el.id] = el.value;
+          } else {
+            rawFields[el.id] = el.value;
+          }
+        }
+      });
+
+      const payload = {
+        docId: softId,
+        baseId: currentBase,
+        mode: currentFormMode,
+        name: name,
+        aadhaar: getVal('f_aadhaar'),
+        phone: getVal('f_contact'),
+        email: to,
+        fields: {
+          ...rawFields,
+          formatted_education: getVal('f_edu'),
+          formatted_address_permanent: getVal('f_permaddr'),
+          formatted_address_present: getVal('f_presaddr'),
+          formatted_idmarks: getVal('f_idmarks'),
+        }
+      };
+
+      const element = document.getElementById('printArea');
+      const filename = `${softId}-${name.replace(/\s+/g, '_')}.pdf`;
+
+      // Call our custom PDF generator from html2pdf.js
+      generateFormPDF(element, filename, function (err, blob) {
+        if (err) {
+          console.warn('PDF conversion failed:', err);
+          if (loader) loader.style.display = 'none';
+          DocNum.logDocument(name, 'soft_copy');
+          proceedToMail();
+          return;
+        }
+
+        // Trigger local PDF download immediately
+        try {
+          const downloadUrl = URL.createObjectURL(blob);
+          const downloadLink = document.createElement('a');
+          downloadLink.href = downloadUrl;
+          downloadLink.download = filename;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+          setTimeout(() => URL.revokeObjectURL(downloadUrl), 100);
+        } catch (downloadErr) {
+          console.warn('Local PDF download failed:', downloadErr);
+        }
+
+        // Convert blob to base64 for Google Sheets sync
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          const base64data = reader.result.split(',')[1];
+          payload.pdfBase64 = base64data;
+          payload.pdfName = filename;
+
+          // POST to central database
+          fetch(DocNum.getApiEndpoint(), {
+            method: 'POST',
+            mode: 'no-cors',
+            body: JSON.stringify(payload)
+          })
+            .then(() => {
+              if (loader) loader.style.display = 'none';
+              DocNum.logDocument(name, 'soft_copy');
+              proceedToMail();
+            })
+            .catch(err => {
+              console.warn('Google Sheets upload error:', err);
+              if (loader) loader.style.display = 'none';
+              DocNum.logDocument(name, 'soft_copy');
+              proceedToMail();
+            });
+        };
+      });
+    }
+
+    // Run display setup on load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateDocNumberDisplay();
+      const storedMode = localStorage.getItem('cvewd_form_mode') || 'driver';
+      setFormMode(storedMode);
+
+      DocNum.syncNextId(() => {
+        updateDocNumberDisplay();
+      });
+    });
+  </script>
+</body>
+
+</html>
