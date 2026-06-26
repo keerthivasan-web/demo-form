@@ -10,7 +10,7 @@ const DocNum = (() => {
   const PREFIX = 'CVEWD';
 
   // Central Google Apps Script Web App URL for deployment database sync
-  const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyzRJz33kcZktjp1DbdD-3FwmRKSPKoEizK4Dsq5NEbsmNgnqhHGMrLbd89Kp9lx3hp/exec'; 
+  const API_ENDPOINT = 'https://script.google.com/macros/s/AKfycbzLdL-QUVhWvjxnNYd4ROa54y1s4iUUZO_JLDtJHtEHNe7IYan1_tmj4OPe_t7KQ5cP/exec'; 
 
   // Helper: Get padded sequence number
   function getNextSequence() {
